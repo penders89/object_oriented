@@ -12,4 +12,5 @@ class Cat
 end
 
 # here, self means we are able to "set" the instance variable @age
-# without the self reference, it would think it was creating a local variable
+# without the self reference, it would think it was creating a local variable#
+# "self" is the object instance
