@@ -1,0 +1,21 @@
+
+[1mFrom:[0m /home/ubuntu/workspace/object_oriented/tic_tac_toe/tictactoe.rb @ line 147 TTTGame#play:
+
+    [1;34m134[0m: [32mdef[0m [1;34mplay[0m
+    [1;34m135[0m:   display_welcome_message
+    [1;34m136[0m:   display_board
+    [1;34m137[0m:   loop [32mdo[0m
+    [1;34m138[0m:     human_moves
+    [1;34m139[0m:     [32mbreak[0m [32mif[0m board.someone_won? ||  board.full? 
+    [1;34m140[0m:     [1;34m# break if someone_won? || board_full?[0m
+    [1;34m141[0m:     computer_moves
+    [1;34m142[0m:     [32mbreak[0m [32mif[0m board.someone_won? ||  board.full? 
+    [1;34m143[0m: 
+    [1;34m144[0m:     display_board
+    [1;34m145[0m:     [1;34m# break if someone_won? || board_full?[0m
+    [1;34m146[0m:   [32mend[0m
+ => [1;34m147[0m:   binding.pry
+    [1;34m148[0m:   display_result
+    [1;34m149[0m:   display_goodbye_message
+    [1;34m150[0m: [32mend[0m
+
