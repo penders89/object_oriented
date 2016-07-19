@@ -1,26 +1,28 @@
+# frozen_string_literal: true
+
 class Cell
   SHIP_MARKER = "X"
   BLANK_MARKER = "/"
-  
+
   attr_accessor :ship, :shot_at
-  
+
   def initialize
     @ship = nil
     @shot_at = false
   end
-  
+
   def shot_at?
     shot_at
   end
-  
+
   def empty?
     !ship
   end
-  
+
   def place(sh)
     @ship = sh
   end
-  
+
   def display
     if shot_at
       ship ? SHIP_MARKER : BLANK_MARKER
@@ -28,19 +30,18 @@ class Cell
       " "
     end
   end
-  
+
   def shoot
     self.shot_at = true
     ship.shoot if ship
   end
-  
 end
 
 class Board
   BOARD_SIZE = 5
-  
+
   attr_accessor :cells
-  
+
   def initialize
     @cells = []
     (0...BOARD_SIZE).each do |x|
@@ -50,16 +51,15 @@ class Board
       end
     end
   end
-  
+
   def get_empty_positions(size)
     empty_cells = []
     (0...BOARD_SIZE).each do |x|
       (0..BOARD_SIZE - size).each do |y|
         count = 0
         size.times do |n|
-           count += 1 if cells[x][y+n].empty?
+          count += 1 if cells[x][y + n].empty?
         end
-        puts "vertical count is #{count}"
         empty_cells.push([x, y, "V"]) if count == size
       end
     end
@@ -67,78 +67,81 @@ class Board
       (0..BOARD_SIZE - size).each do |x|
         count = 0
         size.times do |n|
-           count += 1 if cells[x+n][y].empty?
+          count += 1 if cells[x + n][y].empty?
         end
         empty_cells.push([x, y, "H"]) if count == size
       end
     end
     empty_cells
   end
-  
+
   def display
     puts "    1   2   3   4   5"
     puts "  +---+---+---+---+---+"
     @cells.each_with_index do |line, idx|
-      puts "#{idx+1} | #{line[0].display} | #{line[1].display} | #{line[2].display} | #{line[3].display} | #{line[4].display} |"
+      puts "#{idx + 1} | #{line[0].display} | #{line[1].display} | " \
+      "#{line[2].display} | #{line[3].display} | #{line[4].display} |"
       puts "  +---+---+---+---+---+"
     end
   end
-  
+
   def place_ship(ship, coord)
     if coord[2] == "H"
       ship.size.times do |n|
-        cells[coord[0]+n][coord[1]].place(ship)
+        cells[coord[0] + n][coord[1]].place(ship)
       end
     elsif coord[2] == "V"
       ship.size.times do |n|
-        cells[coord[0]][coord[1]+n].place(ship)
+        cells[coord[0]][coord[1] + n].place(ship)
       end
     end
   end
-    
-    
 end
 
 class Ship
-  NAMES = { 1 => "Destroyer", 2 => "Cruiser", 3 => "Battleship" }
-  
+  NAMES = { 1 => "Destroyer", 2 => "Cruiser", 3 => "Battleship" }.freeze
+
   attr_reader :size
-  
+
   def initialize(size)
     @size = size
     @health = size
     @name = NAMES[size]
   end
-  
+
   def alive?
     @health != 0
   end
-  
+
   def state
     alive? ? "Alive" : "Sunk"
   end
-  
+
   def display
     puts "#{@name} : #{state}"
   end
-  
+
   def shoot
     @health -= 1
   end
-
 end
 
-
 class Game
+  SHIP_SIZES = [1, 2, 3].freeze
+
   attr_accessor :player_board, :computer_board, :player_ships, :computer_ships
-  
+
   def initialize
     @player_board = Board.new
     @computer_board = Board.new
-    @player_ships = [Ship.new(1), Ship.new(2), Ship.new(3)]
-    @computer_ships = [Ship.new(1), Ship.new(2), Ship.new(3)]
+    @player_ships = create_ships
+    @computer_ships = create_ships
     place_ships(player_ships, player_board)
     place_ships(computer_ships, computer_board)
+  end
+
+  def create_ships
+    SHIP_SIZES.map { |size| Ship.new(size) }
   end
 
   def place_ships(ships, board)
@@ -147,26 +150,25 @@ class Game
       board.place_ship(ship, coord)
     end
   end
-  
+
   def display_welcome
     puts "Welcome to Battleships!"
   end
-  
+
   def display_name(name)
-    puts "#{name}"
+    puts "#{name} board:"
+    puts ""
   end
-  
+
   def display_board(board)
     board.display
   end
-  
+
   def display_ships(ships)
-    ships.each do |ship|
-      ship.display
-    end
+    ships.each(&:display)
     puts ""
   end
-  
+
   def player_shot
     puts "Please select a square to open fire!"
     target = nil
@@ -177,7 +179,7 @@ class Game
         puts "Sorry, that's not a valid input"
         next
       else
-        target_coord = target.split(",").map(&:to_i).map{ |x| x-1}
+        target_coord = target.split(",").map(&:to_i).map { |x| x - 1 }
         if computer_board.cells[target_coord[1]][target_coord[0]].shot_at?
           puts "You've already shot there!"
           next
@@ -185,58 +187,58 @@ class Game
       end
       break
     end
-    target_coord = target.split(",").map(&:to_i).map{ |x| x-1}
+    target_coord = target.split(",").map(&:to_i).map { |x| x - 1 }
     computer_board.cells[target_coord[1]][target_coord[0]].shoot
   end
-  
+
   def computer_shot
-    player_board.cells.flatten.select{ |cell| !cell.shot_at?}.sample.shoot
+    player_board.cells.flatten.select { |cell| !cell.shot_at? }.sample.shoot
   end
-    
-  
+
   def all_ships_dead?(ships)
     ships.each do |ship|
       return false if ship.alive?
     end
     true
   end
-  
+
   def display_result
-    puts "Well done, you won!"
+    if all_ships_dead? computer_ships
+      display_board(computer_board)
+      puts "Well done, you won!"
+    elsif all_ships_dead? player_ships
+      display_board(player_board)
+      puts "Computer won"
+    end
   end
-  
+
   def display_goodbye
     puts "Thanks for playing battleships"
   end
-  
+
   def clear
     system 'clear'
   end
-  
+
   def play
     display_welcome
     loop do
       clear
-      display_name("Computer board:")
+      display_name("Computer")
       display_board(computer_board)
       display_ships(computer_ships)
-      display_name("Player board:")
+      display_name("Player")
       display_board(player_board)
       display_ships(player_ships)
       player_shot
+      break if all_ships_dead? computer_ships
       computer_shot
-      break if all_ships_dead? (player_ships)
-      break if all_ships_dead? (computer_ships)
+      break if all_ships_dead? player_ships
     end
     display_result
     display_goodbye
   end
-  
 end
 
 game = Game.new
 game.play
-
-
-
-
