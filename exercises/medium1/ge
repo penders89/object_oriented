@@ -1,0 +1,22 @@
+
+[1mFrom:[0m /home/ubuntu/workspace/object_oriented/exercises/medium1/crypto_square.rb @ line 33 Crypto#ciphertext:
+
+    [1;34m27[0m: [32mdef[0m [1;34mciphertext[0m
+    [1;34m28[0m: 
+    [1;34m29[0m:   string = [31m[1;31m"[0m[31m[1;31m"[0m[31m[0m
+    [1;34m30[0m:   counter = [1;34m0[0m
+    [1;34m31[0m:   ([1;34m1[0m..size).each [32mdo[0m |x|
+    [1;34m32[0m:     ([1;34m1[0m..size).each [32mdo[0m |y|
+ => [1;34m33[0m:       binding.pry
+    [1;34m34[0m:       counter += [1;34m1[0m
+    [1;34m35[0m:       [32mbreak[0m [32mif[0m counter == normalize_plaintext.length-[1;34m5[0m
+    [1;34m36[0m:       [32mif[0m y == size
+    [1;34m37[0m:         string += [31m[1;31m"[0m[31m#{plaintext_segments[y][x]}[0m[31m [1;31m"[0m[31m[0m
+    [1;34m38[0m:       [32melse[0m
+    [1;34m39[0m:         string += [31m[1;31m"[0m[31m#{plaintext_segments}[0m[31m[1;31m"[0m[31m[0m
+    [1;34m40[0m:       [32mend[0m
+    [1;34m41[0m:     [32mend[0m
+    [1;34m42[0m:   [32mend[0m
+    [1;34m43[0m:   string
+    [1;34m44[0m: [32mend[0m
+
